@@ -10,7 +10,7 @@ const { t } = Astro.props;
 
 <section id="how" class="section">
   <div class="container-x">
-    <header data-reveal>
+    <header data-reveal="children">
       <p class="label">{t.how.label}</p>
       <h2 class="h2 mt-4">{t.how.title}</h2>
     </header>
@@ -20,7 +20,7 @@ const { t } = Astro.props;
         t.how.steps.map((step, i) => (
           <li class="step" style={`--i:${i}`} data-reveal>
             <StepArt step={(i + 1) as 1 | 2 | 3} class="h-auto w-[10.5rem] text-cream lg:w-[12rem]" />
-            <div class="mt-7 border-t border-cream/16 pt-5">
+            <div class="rule-t mt-7 pt-5">
               <p class="font-display text-[0.8125rem] font-medium tracking-[0.08em] text-cream/55">
                 0{i + 1}
               </p>

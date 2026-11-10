@@ -137,16 +137,27 @@
     line-height: 1.2;
     text-align: center;
     transition:
-      background-color 0.25s var(--ease-soft),
-      border-color 0.25s var(--ease-soft),
-      color 0.25s var(--ease-soft);
+      background-color 0.35s var(--ease-soft),
+      border-color 0.35s var(--ease-soft),
+      color 0.35s var(--ease-soft),
+      transform 0.45s var(--ease-soft);
   }
   .btn svg {
     flex: none;
-    transition: transform 0.3s var(--ease-soft);
+    transition: transform 0.45s var(--ease-soft);
   }
   .btn:hover svg {
     transform: translateX(2px);
+  }
+  /* Gentle lift, only where there is a real pointer and motion is welcome. */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+    .btn:active {
+      transform: translateY(0);
+      transition-duration: 0.12s;
+    }
   }
 
   .btn-primary {
@@ -185,6 +196,39 @@
     border-radius: 0.75rem;
   }
 
+  /* Divider lines that draw in from the left. They sit exactly where the 1px
+     border was, so nothing moves; the colour comes from --rule. */
+  .rule-t,
+  .rule-b {
+    position: relative;
+  }
+  .rule-t {
+    border-top: 1px solid transparent;
+  }
+  .rule-b {
+    border-bottom: 1px solid transparent;
+  }
+  .rule-t::before,
+  .rule-b::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    height: 1px;
+    background: var(--rule, color-mix(in oklab, var(--color-cream) 16%, transparent));
+    transform-origin: left center;
+    transition: transform 1.2s var(--ease-soft);
+    pointer-events: none;
+  }
+  .rule-t::before {
+    top: -1px;
+  }
+  .rule-b::after {
+    bottom: -1px;
+  }
+  .rule-navy {
+    --rule: color-mix(in oklab, var(--color-navy) 18%, transparent);
+  }
+
   .sr-only-focusable:not(:focus):not(:focus-within) {
     position: absolute;
     width: 1px;
@@ -196,9 +240,26 @@
 }
 
 /* Scroll reveals. Hidden only when scripts are running and motion is allowed;
-   src/scripts/motion.ts fades them in. */
-html.motion [data-reveal] {
+   src/scripts/motion.ts fades them in and marks them with .is-in.
+   data-reveal="children" staggers the block's children instead of moving it as one. */
+html.motion [data-reveal]:not([data-reveal='children']):not(.is-in),
+html.motion [data-reveal='children']:not(.is-in) > * {
   opacity: 0;
   transform: translateY(1.5rem);
-  will-change: transform, opacity;
+}
+html.motion .rule-t:not(.is-in)::before,
+html.motion .rule-b:not(.is-in)::after {
+  transform: scaleX(0);
+}
+
+/* Visitors who ask for less motion get none: no transitions, no smooth scrolling. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
 }

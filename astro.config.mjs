@@ -41,5 +41,9 @@ export default defineConfig({
       fallbacks: ['sans-serif'],
     },
   ],
-  vite: { plugins: [tailwindcss()] },
+  vite: {
+    plugins: [tailwindcss()],
+    // Three.js is one large chunk by nature; it is lazy-loaded on desktop only.
+    build: { chunkSizeWarningLimit: 700 },
+  },
 });

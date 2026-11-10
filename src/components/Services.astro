@@ -11,25 +11,41 @@ const { t } = Astro.props;
 
 <section id="services" class="section">
   <div class="container-x grid gap-11 lg:grid-cols-12 lg:gap-10">
-    <header class="lg:col-span-5" data-reveal>
+    <header class="lg:col-span-5" data-reveal="children">
       <p class="label">{t.services.label}</p>
       <h2 class="h2 mt-4 max-w-[26rem]">{t.services.title}</h2>
       <p class="lead mt-5 max-w-[26rem] text-cream/75">{t.services.lead}</p>
-      <a href={telegramLink(t.messages.services)} class="btn btn-outline mt-8">
-        {t.services.cta}
-        <Icon name="arrow-right" size={18} />
-      </a>
+      <div class="mt-8">
+        <a href={telegramLink(t.messages.services)} class="btn btn-outline">
+          {t.services.cta}
+          <Icon name="arrow-right" size={18} />
+        </a>
+      </div>
     </header>
 
-    <ul class="border-t border-cream/16 lg:col-span-6 lg:col-start-7">
+    <ul class="rule-t lg:col-span-6 lg:col-start-7">
       {
         t.services.items.map((item) => (
-          <li class="border-b border-cream/16 py-6 lg:py-7" data-reveal>
-            <h3 class="text-lg leading-snug font-bold tracking-[-0.01em] lg:text-xl">{item.name}</h3>
-            <p class="mt-2 max-w-[30rem] text-cream/75">{item.text}</p>
+          <li class="service-row rule-b py-6 lg:py-7" data-reveal>
+            <div class="service-shift">
+              <h3 class="text-lg leading-snug font-bold tracking-[-0.01em] lg:text-xl">{item.name}</h3>
+              <p class="mt-2 max-w-[30rem] text-cream/75">{item.text}</p>
+            </div>
           </li>
         ))
       }
     </ul>
   </div>
 </section>
+
+<style>
+  /* Rows lean a little towards the pointer's side on hover. */
+  .service-shift {
+    transition: transform 0.6s var(--ease-soft);
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .service-row:hover .service-shift {
+      transform: translateX(0.5rem);
+    }
+  }
+</style>

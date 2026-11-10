@@ -1,6 +1,8 @@
 ---
 import ProductArt from './ProductArt.astro';
 import Icon from './Icon.astro';
+import cardFront from '../assets/card/front.webp';
+import cardBack from '../assets/card/back.webp';
 import { products, telegramLink } from '../data/site';
 import { formatPrice, type Dictionary, type Locale } from '../i18n';
 
@@ -13,7 +15,7 @@ const { locale, t } = Astro.props;
 
 <section id="products" class="section bg-cream text-navy">
   <div class="container-x">
-    <header class="max-w-[44rem]" data-reveal>
+    <header class="max-w-[44rem]" data-reveal="children">
       <p class="label">{t.products.label}</p>
       <h2 class="h2 mt-4">{t.products.title}</h2>
       <p class="lead mt-5 text-navy/75">{t.products.lead}</p>
@@ -29,26 +31,37 @@ const { locale, t } = Astro.props;
               : formatPrice(product.price, locale, t.products.currency);
           return (
             <li class:list={[product.featured && 'md:col-span-3']} data-reveal>
-              <article class:list={['product', product.featured && 'product-featured']}>
-                <div class="product-art">
-                  <ProductArt kind={product.id} label={`${t.products.placeholder}: ${item.name}`} />
-                </div>
-                <div class="product-body">
-                  <h3 class="product-name">{item.name}</h3>
-                  <p class="product-text">{item.text}</p>
-                  <div class="product-foot">
-                    <p class="product-price">{price}</p>
-                    <a
-                      href={telegramLink(t.messages[product.id])}
-                      class:list={['btn', product.featured ? 'btn-primary' : 'btn-outline']}
-                    >
-                      {t.products.order}
-                      <span class="sr-only">: {item.name}</span>
-                      <Icon name="arrow-right" size={18} />
-                    </a>
+              <div class="tile" data-tilt={product.featured ? 'lift' : 'tilt'}>
+                <article class:list={['product', product.featured && 'product-featured']}>
+                  <div
+                    class="product-art"
+                    {...(product.featured
+                      ? { 'data-card3d': '', 'data-front': cardFront.src, 'data-back': cardBack.src }
+                      : {})}
+                  >
+                    <ProductArt
+                      kind={product.id}
+                      label={`${t.products.placeholder}: ${item.name}`}
+                      data-tilt-art
+                    />
                   </div>
-                </div>
-              </article>
+                  <div class="product-body">
+                    <h3 class="product-name">{item.name}</h3>
+                    <p class="product-text">{item.text}</p>
+                    <div class="product-foot">
+                      <p class="product-price">{price}</p>
+                      <a
+                        href={telegramLink(t.messages[product.id])}
+                        class:list={['btn', product.featured ? 'btn-primary' : 'btn-outline']}
+                      >
+                        {t.products.order}
+                        <span class="sr-only">: {item.name}</span>
+                        <Icon name="arrow-right" size={18} />
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              </div>
             </li>
           );
         })
@@ -58,6 +71,29 @@ const { locale, t } = Astro.props;
 </section>
 
 <style>
+  /* Wrapper that carries the hover shadow, so the tile itself can lift and tilt above it.
+     The shadow is always painted and only its opacity changes. */
+  .tile {
+    position: relative;
+    height: 100%;
+    isolation: isolate;
+  }
+  .tile::after {
+    content: '';
+    position: absolute;
+    inset: 0.75rem 1rem -0.25rem;
+    z-index: -1;
+    border-radius: 1.375rem;
+    box-shadow: 0 1.75rem 2.75rem -0.75rem color-mix(in srgb, var(--color-navy) 55%, transparent);
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-soft);
+    pointer-events: none;
+  }
+  /* .is-hover is set by src/scripts/motion.ts together with the lift, so the two never drift apart. */
+  .tile:global(.is-hover)::after {
+    opacity: 1;
+  }
+
   .product {
     display: flex;
     flex-direction: column;
@@ -68,7 +104,27 @@ const { locale, t } = Astro.props;
     color: var(--color-cream);
   }
   .product-art {
+    position: relative;
     background: var(--color-navy-2);
+  }
+  /* The 3D card (desktop only) is drawn over the same box as the drawn mockup,
+     which stays underneath as the fallback and for screen readers. */
+  .product-art :global(canvas) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.9s var(--ease-soft);
+  }
+  .product-art :global(svg) {
+    transition: opacity 0.6s var(--ease-soft);
+  }
+  .product-art:global(.is-3d) :global(canvas) {
+    opacity: 1;
+  }
+  .product-art:global(.is-3d) :global(svg) {
+    opacity: 0;
   }
   .product-art :global(svg) {
     display: block;

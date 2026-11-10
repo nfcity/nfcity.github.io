@@ -19,11 +19,23 @@ npm run preview  # serves dist/ locally
 | Text in Uzbek, Russian, English | `src/i18n/uz.json`, `src/i18n/ru.json`, `src/i18n/en.json` |
 | Prices, product list, Telegram, phone, Instagram | `src/data/site.ts` |
 | Colours and fonts | `src/styles/global.css`, `astro.config.mjs` |
-| Hero animation timing, scroll motion | `src/scripts/motion.ts` |
+| Hero animation timing, scroll reveals, FAQ glide, hover tilt | `src/scripts/motion.ts` |
+| The 3D card (Three.js, desktop only) | `src/scripts/card3d.ts` |
+| The 3D card's front and back artwork | `scripts/make-card-textures.mjs` |
 | Sections | `src/components/` |
 
 To show a price, set `price` for that product in `src/data/site.ts` (a number in soʻm).
 Leave it as `null` to show "ask for price".
+
+## Motion and the 3D card
+
+- Everything animates transform and opacity only, on one easing curve (`--ease-soft`).
+  Visitors with "reduce motion" switched on get the finished page with no animation.
+- The 3D card sits in the Google review tile. Three.js is loaded only on desktops with a
+  mouse, and only when that tile is about to scroll into view. Phones keep the drawn card.
+- The card faces are built by `node scripts/make-card-textures.mjs` from the skyline
+  artwork in `src/assets/card/source/` (generated with Higgsfield), recoloured to the
+  brand palette, with the real logo laid on top.
 
 ## Placeholder images to replace
 

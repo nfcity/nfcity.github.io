@@ -27,13 +27,13 @@ const { t } = Astro.props;
         </a>
         <a
           href="#how"
-          class="group inline-flex min-h-11 items-center gap-2 font-semibold text-cream/85 transition-colors duration-200 hover:text-cream"
+          class="group inline-flex min-h-11 items-center gap-2 font-semibold text-cream/85 transition-colors duration-300 ease-(--ease-soft) hover:text-cream"
         >
           {t.hero.secondary}
           <Icon
             name="arrow-down"
             size={18}
-            class="transition-transform duration-300 ease-(--ease-soft) group-hover:translate-y-0.5"
+            class="transition-transform duration-[450ms] ease-(--ease-soft) group-hover:translate-y-0.5"
           />
         </a>
       </div>

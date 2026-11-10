@@ -17,13 +17,13 @@ const year = new Date().getFullYear();
 
 <section id="contact" class="relative isolate overflow-hidden border-t border-cream/10">
   <div class="container-x relative z-10 pt-20 pb-40 lg:pt-32 lg:pb-60">
-    <div data-reveal>
+    <div data-reveal="children">
       <p class="label">{t.contact.label}</p>
       <h2 class="contact-title mt-4 max-w-[52rem]">{t.contact.title}</h2>
       <p class="lead mt-6 max-w-[31rem] text-cream/78">{t.contact.lead}</p>
     </div>
 
-    <ul aria-label={t.a11y.contacts} class="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap" data-reveal>
+    <ul aria-label={t.a11y.contacts} class="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap" data-reveal="children">
       <li>
         <a href={telegramLink(t.messages.general)} class="btn btn-primary w-full sm:w-auto" data-contact-cta>
           <Icon name="send" />

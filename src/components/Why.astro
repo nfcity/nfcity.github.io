@@ -9,16 +9,16 @@ const { t } = Astro.props;
 
 <section id="why" class="section bg-cream text-navy">
   <div class="container-x">
-    <header data-reveal>
+    <header data-reveal="children">
       <p class="label">{t.why.label}</p>
       <h2 class="h2 mt-4 max-w-[40rem]">{t.why.title}</h2>
     </header>
 
-    <ul class="mt-11 border-t border-navy/18 lg:mt-16">
+    <ul class="rule-t rule-navy mt-11 lg:mt-16">
       {
         t.why.items.map((item) => (
           <li
-            class="grid gap-3 border-b border-navy/18 py-8 lg:grid-cols-12 lg:items-baseline lg:gap-10 lg:py-11"
+            class="rule-b grid gap-3 py-8 lg:grid-cols-12 lg:items-baseline lg:gap-10 lg:py-11"
             data-reveal
           >
             <h3 class="why-title lg:col-span-7">{item.title}</h3>
