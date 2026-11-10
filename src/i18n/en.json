@@ -1,0 +1,164 @@
+{
+  "meta": {
+    "title": "NFCity — NFC cards for Google reviews | Tashkent",
+    "description": "A customer taps the card with their phone and lands on your Google review page. NFC cards with setup included and delivery across Uzbekistan.",
+    "ogAlt": "NFCity — NFC cards, Tashkent"
+  },
+  "a11y": {
+    "skip": "Skip to content",
+    "home": "NFCity — home",
+    "language": "Language",
+    "mainNav": "Main menu",
+    "contacts": "Ways to reach us"
+  },
+  "nav": {
+    "how": "How it works",
+    "products": "Cards",
+    "services": "Services",
+    "faq": "FAQ",
+    "order": "Order"
+  },
+  "cta": {
+    "telegram": "Order on Telegram"
+  },
+  "hero": {
+    "eyebrow": "NFC cards · Tashkent",
+    "title": "One tap. Your Google review page opens.",
+    "lead": "A customer holds their phone to the card and lands straight on your review page. No app, no searching.",
+    "secondary": "How it works",
+    "notes": ["Setup included", "Delivery across Uzbekistan"],
+    "sceneAlt": "An NFC card moves towards a phone, and a five-star review page opens on the screen.",
+    "sceneBusiness": "Your business",
+    "sceneRate": "Rate us",
+    "scenePost": "Post"
+  },
+  "how": {
+    "label": "How it works",
+    "title": "Ready in three steps",
+    "steps": [
+      {
+        "title": "We set it up",
+        "text": "Send us your business’s Google Maps link. We program the card so it opens your review page."
+      },
+      {
+        "title": "You place it",
+        "text": "Put the card by the till, on a table or at reception — anywhere your customers will see it."
+      },
+      {
+        "title": "Customers tap",
+        "text": "They hold their phone to the card, the review page opens, and they leave a rating in seconds."
+      }
+    ]
+  },
+  "products": {
+    "label": "Cards",
+    "title": "Pick the card that fits your business",
+    "lead": "Every card arrives set up and ready to use.",
+    "askPrice": "Ask for price",
+    "currency": "soʻm",
+    "order": "Order",
+    "placeholder": "Card mockup",
+    "items": {
+      "review": {
+        "name": "Google review card",
+        "text": "One tap opens your Google review page. The simplest way to ask a happy customer for a rating."
+      },
+      "business": {
+        "name": "Digital business card",
+        "text": "One tap puts your name, number and links on a customer’s phone."
+      },
+      "social": {
+        "name": "Instagram / Telegram card",
+        "text": "One tap opens your Instagram profile or Telegram channel, so customers follow you on the spot."
+      },
+      "menu": {
+        "name": "Menu card",
+        "text": "Guests tap the card on the table and your menu opens on their screen."
+      }
+    }
+  },
+  "services": {
+    "label": "Services",
+    "title": "We also build websites, apps and logos",
+    "lead": "Alongside cards, we take on digital work for local businesses.",
+    "cta": "Discuss a project",
+    "items": [
+      {
+        "name": "Website development",
+        "text": "Landing pages and business sites that load fast and look right on a phone."
+      },
+      {
+        "name": "App development",
+        "text": "Mobile apps for your customers or your team."
+      },
+      {
+        "name": "Logo design",
+        "text": "A clear, memorable mark for your signage, packaging and social profiles."
+      }
+    ]
+  },
+  "why": {
+    "label": "Why NFCity",
+    "title": "Simple for you, simple for your customers",
+    "items": [
+      {
+        "title": "Quality cards",
+        "text": "Sturdy cards with clean print, made to sit on a counter all day."
+      },
+      {
+        "title": "Fast setup",
+        "text": "We program the card before it ships. It arrives ready to work."
+      },
+      {
+        "title": "Delivery across Uzbekistan",
+        "text": "From Tashkent to any region. Order on Telegram and we send it to your city."
+      }
+    ]
+  },
+  "faq": {
+    "label": "FAQ",
+    "title": "Common questions",
+    "items": [
+      {
+        "q": "Does it work on iPhone and Android?",
+        "a": "Yes. It works on iPhone XS and newer, and on Android phones with NFC switched on. That covers most phones in use today."
+      },
+      {
+        "q": "Does the customer need an app?",
+        "a": "No. The phone reads the card by itself and opens the page in the browser or in Google Maps."
+      },
+      {
+        "q": "How long does delivery take?",
+        "a": "It depends on your city. Message us on Telegram and we’ll give you the exact timing before you order."
+      },
+      {
+        "q": "Can the link be changed later?",
+        "a": "Yes. If your link changes, message us and we’ll help you update the card."
+      }
+    ]
+  },
+  "contact": {
+    "label": "Contact",
+    "title": "Order your card today",
+    "lead": "Message us on Telegram. We’ll answer your questions and take your order.",
+    "call": "Call us",
+    "instagram": "Instagram"
+  },
+  "footer": {
+    "tagline": "NFC cards and digital services.",
+    "city": "Tashkent, Uzbekistan"
+  },
+  "messages": {
+    "general": "Hello! I’d like to order an NFC card.",
+    "review": "Hello! I’d like to order a Google review card.",
+    "business": "Hello! I’d like to order a digital business card.",
+    "social": "Hello! I’d like to order an Instagram / Telegram card.",
+    "menu": "Hello! I’d like to order a menu card.",
+    "services": "Hello! I’d like to discuss a project."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "text": "This page doesn’t exist or has been moved.",
+    "back": "Back to home"
+  }
+}

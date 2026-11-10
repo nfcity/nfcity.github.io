@@ -1,0 +1,164 @@
+{
+  "meta": {
+    "title": "NFCity — Google sharhlari uchun NFC kartalar | Toshkent",
+    "description": "Mijoz telefonini kartaga tekkizadi va biznesingizning Google sharh sahifasi ochiladi. NFC kartalarni sozlab beramiz, butun Oʻzbekiston boʻylab yetkazamiz.",
+    "ogAlt": "NFCity — NFC kartalar, Toshkent"
+  },
+  "a11y": {
+    "skip": "Asosiy qismga oʻtish",
+    "home": "NFCity — bosh sahifa",
+    "language": "Til",
+    "mainNav": "Asosiy menyu",
+    "contacts": "Aloqa usullari"
+  },
+  "nav": {
+    "how": "Qanday ishlaydi",
+    "products": "Kartalar",
+    "services": "Xizmatlar",
+    "faq": "Savollar",
+    "order": "Buyurtma"
+  },
+  "cta": {
+    "telegram": "Telegramda buyurtma berish"
+  },
+  "hero": {
+    "eyebrow": "NFC kartalar · Toshkent",
+    "title": "Telefonni tekkizdi — sharh sahifasi ochildi.",
+    "lead": "Mijoz telefonini kartaga tekkizadi — biznesingizning Google sharh sahifasi darhol ochiladi. Ilova ham, qidirish ham kerak emas.",
+    "secondary": "Qanday ishlaydi",
+    "notes": ["Sozlab beramiz", "Oʻzbekiston boʻylab yetkazamiz"],
+    "sceneAlt": "NFC karta telefonga yaqinlashadi va telefonda besh yulduzli sharh sahifasi ochiladi.",
+    "sceneBusiness": "Biznesingiz",
+    "sceneRate": "Bizni baholang",
+    "scenePost": "Yuborish"
+  },
+  "how": {
+    "label": "Qanday ishlaydi",
+    "title": "Uch qadamda tayyor",
+    "steps": [
+      {
+        "title": "Biz sozlaymiz",
+        "text": "Biznesingizning Google Maps havolasini yuboring. Kartani sharh sahifangiz ochiladigan qilib sozlab beramiz."
+      },
+      {
+        "title": "Siz joylashtirasiz",
+        "text": "Kartani kassa yoniga, stol ustiga yoki qabulxonaga qoʻying — mijoz koʻradigan joy boʻlsa bas."
+      },
+      {
+        "title": "Mijoz tekkizadi",
+        "text": "Telefonini kartaga tekkizadi, sharh sahifasi ochiladi va bir necha soniyada baho qoldiradi."
+      }
+    ]
+  },
+  "products": {
+    "label": "Kartalar",
+    "title": "Biznesingizga mos kartani tanlang",
+    "lead": "Har bir karta sozlangan va ishlatishga tayyor holda yetkaziladi.",
+    "askPrice": "Narxini soʻrang",
+    "currency": "soʻm",
+    "order": "Buyurtma berish",
+    "placeholder": "Karta maketi",
+    "items": {
+      "review": {
+        "name": "Google sharh kartasi",
+        "text": "Bir tegishda Google sharh sahifangiz ochiladi. Mamnun mijozdan baho soʻrashning eng oson yoʻli."
+      },
+      "business": {
+        "name": "Raqamli vizitka",
+        "text": "Bir tegishda ismingiz, raqamingiz va havolalaringiz mijozning telefonida ochiladi."
+      },
+      "social": {
+        "name": "Instagram / Telegram kartasi",
+        "text": "Bir tegishda Instagram sahifangiz yoki Telegram kanalingiz ochiladi — mijoz shu zahoti obuna boʻladi."
+      },
+      "menu": {
+        "name": "Menyu kartasi",
+        "text": "Mehmon telefonini stoldagi kartaga tekkizadi — menyungiz ekranda ochiladi."
+      }
+    }
+  },
+  "services": {
+    "label": "Xizmatlar",
+    "title": "Sayt, ilova va logo ham yaratamiz",
+    "lead": "Kartalardan tashqari, mahalliy bizneslar uchun raqamli ishlarni ham bajaramiz.",
+    "cta": "Loyihani muhokama qilish",
+    "items": [
+      {
+        "name": "Sayt yaratish",
+        "text": "Tez ochiladigan, telefonda qulay koʻrinadigan lending va biznes saytlar."
+      },
+      {
+        "name": "Mobil ilova",
+        "text": "Mijozlaringiz yoki jamoangiz uchun mobil ilovalar."
+      },
+      {
+        "name": "Logo dizayni",
+        "text": "Peshlavhada, qadoqda va ijtimoiy tarmoqlarda birdek yaxshi koʻrinadigan, esda qoladigan logo."
+      }
+    ]
+  },
+  "why": {
+    "label": "Nega NFCity",
+    "title": "Sizga ham, mijozingizga ham qulay",
+    "items": [
+      {
+        "title": "Sifatli kartalar",
+        "text": "Pishiq karta, toza bosma. Kun boʻyi peshtaxtada turishga moʻljallangan."
+      },
+      {
+        "title": "Tez sozlash",
+        "text": "Kartani joʻnatishdan oldin oʻzimiz sozlaymiz. Qoʻlingizga ishlashga tayyor holda yetib boradi."
+      },
+      {
+        "title": "Oʻzbekiston boʻylab yetkazamiz",
+        "text": "Toshkentdan istalgan viloyatga. Telegramda buyurtma bering — shahringizga joʻnatamiz."
+      }
+    ]
+  },
+  "faq": {
+    "label": "Savollar",
+    "title": "Koʻp soʻraladigan savollar",
+    "items": [
+      {
+        "q": "iPhone va Androidda ishlaydimi?",
+        "a": "Ha. iPhone XS va undan yangi modellarda hamda NFC yoqilgan Android telefonlarda ishlaydi. Hozirgi telefonlarning aksariyati shunday."
+      },
+      {
+        "q": "Mijozga ilova kerakmi?",
+        "a": "Yoʻq. Telefon kartani oʻzi oʻqiydi va sahifani brauzerda yoki Google Maps’da ochadi."
+      },
+      {
+        "q": "Yetkazib berish qancha vaqt oladi?",
+        "a": "Shahringizga bogʻliq. Telegramda yozing — buyurtma berishdan oldin aniq muddatni aytamiz."
+      },
+      {
+        "q": "Havolani keyin oʻzgartirsa boʻladimi?",
+        "a": "Ha. Havolangiz oʻzgarsa, bizga yozing — kartani yangilashga yordam beramiz."
+      }
+    ]
+  },
+  "contact": {
+    "label": "Aloqa",
+    "title": "Kartangizga bugun buyurtma bering",
+    "lead": "Telegramda yozing. Savollaringizga javob beramiz va buyurtmani qabul qilamiz.",
+    "call": "Qoʻngʻiroq qilish",
+    "instagram": "Instagram"
+  },
+  "footer": {
+    "tagline": "NFC kartalar va raqamli xizmatlar.",
+    "city": "Toshkent, Oʻzbekiston"
+  },
+  "messages": {
+    "general": "Assalomu alaykum! NFC kartaga buyurtma bermoqchiman.",
+    "review": "Assalomu alaykum! Google sharh kartasiga buyurtma bermoqchiman.",
+    "business": "Assalomu alaykum! Raqamli vizitkaga buyurtma bermoqchiman.",
+    "social": "Assalomu alaykum! Instagram / Telegram kartasiga buyurtma bermoqchiman.",
+    "menu": "Assalomu alaykum! Menyu kartasiga buyurtma bermoqchiman.",
+    "services": "Assalomu alaykum! Loyiha boʻyicha gaplashmoqchiman."
+  },
+  "notFound": {
+    "title": "Sahifa topilmadi",
+    "text": "Bu sahifa mavjud emas yoki koʻchirilgan.",
+    "back": "Bosh sahifaga qaytish"
+  }
+}

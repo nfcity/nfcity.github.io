@@ -1,0 +1,60 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/logo.png';
+import LangSwitcher from './LangSwitcher.astro';
+import { telegramLink } from '../data/site';
+import { localePath, type Dictionary, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+  t: Dictionary;
+}
+const { locale, t } = Astro.props;
+
+const links = [
+  { href: '#how', label: t.nav.how },
+  { href: '#products', label: t.nav.products },
+  { href: '#services', label: t.nav.services },
+  { href: '#faq', label: t.nav.faq },
+];
+---
+
+<header class="relative z-40 border-b border-cream/10 bg-navy lg:sticky lg:top-0">
+  <div class="container-x flex h-16 items-center justify-between gap-4 lg:h-[4.5rem]">
+    <a href={localePath(locale)} aria-label={t.a11y.home} class="-ml-1 flex min-h-11 items-center px-1">
+      <Image
+        src={logo}
+        alt="NFCity"
+        width={98}
+        densities={[1, 2, 3]}
+        loading="eager"
+        fetchpriority="high"
+        class="h-[2.375rem] w-auto"
+      />
+    </a>
+
+    <nav aria-label={t.a11y.mainNav} class="hidden lg:block">
+      <ul class="flex items-center gap-9">
+        {
+          links.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="py-3 text-[0.9375rem] font-medium text-cream/75 transition-colors duration-200 hover:text-cream"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-4">
+      <LangSwitcher locale={locale} t={t} />
+      <a href={telegramLink(t.messages.general)} class="btn btn-primary btn-sm hidden lg:inline-flex">
+        {t.nav.order}
+      </a>
+    </div>
+  </div>
+</header>

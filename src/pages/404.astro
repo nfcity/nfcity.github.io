@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import { getDictionary } from '../i18n';
+
+const t = getDictionary('uz');
+---
+
+<Base locale="uz" t={t} title={`${t.notFound.title} — NFCity`} noindex>
+  <Header locale="uz" t={t} />
+  <main id="main" class="container-x grid min-h-[70vh] content-center py-24">
+    <p class="label">404</p>
+    <h1 class="h2 mt-4">{t.notFound.title}</h1>
+    <p class="lead mt-5 text-cream/75">{t.notFound.text}</p>
+    <p class="mt-8">
+      <a href="/" class="btn btn-outline">{t.notFound.back}</a>
+    </p>
+  </main>
+</Base>

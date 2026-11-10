@@ -1,0 +1,288 @@
+---
+// The signature moment: a card reaches the phone, the signal arcs pulse,
+// and a five-star review page opens. Built from plain HTML layers so every
+// moving part animates with transform and opacity only.
+// Without scripts, or with reduced motion, this markup already shows the final frame.
+import Arcs from './Arcs.astro';
+import type { Dictionary } from '../i18n';
+
+interface Props {
+  t: Dictionary;
+}
+const { t } = Astro.props;
+const star =
+  'M12 2.9l2.72 5.6 6.13.86-4.45 4.3 1.07 6.1L12 16.85 6.53 19.76l1.07-6.1-4.45-4.3 6.13-.86z';
+---
+
+<div class="scene" data-scene role="img" aria-label={t.hero.sceneAlt}>
+  <div class="s-stage" aria-hidden="true">
+    <div class="s-card" data-s-card>
+      <span class="s-card-word">NFC</span>
+      <Arcs class="s-card-arcs" />
+    </div>
+
+    <div class="s-phone">
+      <span class="s-notch"></span>
+      <div class="s-screen">
+        <div class="s-idle">
+          <span class="s-idle-time">10:45</span>
+          <span class="s-idle-bar"></span>
+        </div>
+
+        <div class="s-review" data-s-review>
+          <span class="s-avatar">
+            <Arcs class="s-avatar-arcs" tone="current" />
+          </span>
+          <span class="s-name">{t.hero.sceneBusiness}</span>
+          <span class="s-rate">{t.hero.sceneRate}</span>
+          <span class="s-stars">
+            {
+              [0, 1, 2, 3, 4].map(() => (
+                <span class="s-star">
+                  <svg viewBox="0 0 24 24" class="s-star-line">
+                    <path d={star} />
+                  </svg>
+                  <svg viewBox="0 0 24 24" class="s-star-fill" data-s-star>
+                    <path d={star} />
+                  </svg>
+                </span>
+              ))
+            }
+          </span>
+          <span class="s-lines"><i></i><i></i><i></i></span>
+          <span class="s-post">{t.hero.scenePost}</span>
+        </div>
+      </div>
+    </div>
+
+    <Arcs class="s-arcs" arcAttr="data-s-arc" />
+  </div>
+</div>
+
+<style>
+  .scene {
+    container-type: inline-size;
+    width: 100%;
+    max-width: 20.5rem;
+    margin-inline: auto;
+  }
+  @media (min-width: 40rem) {
+    .scene {
+      max-width: 26rem;
+    }
+  }
+  @media (min-width: 64rem) {
+    .scene {
+      max-width: 31rem;
+    }
+  }
+  .s-stage {
+    position: relative;
+    aspect-ratio: 100 / 88;
+  }
+
+  /* Phone */
+  .s-phone {
+    position: absolute;
+    left: 52cqw;
+    top: 2cqw;
+    width: 41cqw;
+    height: 84cqw;
+    padding: 1.3cqw;
+    border: 0.75cqw solid var(--color-cream);
+    border-radius: 7.6cqw;
+    background: var(--color-navy-2);
+    z-index: 2;
+  }
+  .s-notch {
+    position: absolute;
+    top: 3cqw;
+    left: 50%;
+    width: 10cqw;
+    height: 2.4cqw;
+    margin-left: -5cqw;
+    border-radius: 2cqw;
+    background: var(--color-navy);
+    z-index: 3;
+  }
+  .s-screen {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 5.6cqw;
+    background: #070a35;
+  }
+  .s-idle {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20cqw;
+    gap: 2.4cqw;
+    color: color-mix(in srgb, var(--color-cream) 50%, transparent);
+  }
+  .s-idle-time {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 7.4cqw;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .s-idle-bar {
+    width: 13cqw;
+    height: 1.3cqw;
+    border-radius: 1cqw;
+    background: currentColor;
+    opacity: 0.6;
+  }
+
+  /* Review page on the phone */
+  .s-review {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 9.5cqw 3.2cqw 3.4cqw;
+    border-radius: 5.6cqw 5.6cqw 0 0;
+    background: var(--color-cream);
+    color: var(--color-navy);
+    text-align: center;
+    will-change: transform;
+  }
+  .s-avatar {
+    display: grid;
+    place-items: center;
+    width: 10cqw;
+    height: 10cqw;
+    border-radius: 50%;
+    background: var(--color-navy);
+    color: var(--color-cream);
+  }
+  .s-avatar-arcs {
+    width: 3.6cqw;
+  }
+  .s-name {
+    margin-top: 2.4cqw;
+    font-weight: 700;
+    font-size: 3.5cqw;
+    line-height: 1.15;
+  }
+  .s-rate {
+    margin-top: 0.9cqw;
+    font-size: 2.75cqw;
+    line-height: 1.2;
+    opacity: 0.66;
+  }
+  .s-stars {
+    display: flex;
+    gap: 0.7cqw;
+    margin-top: 3.6cqw;
+  }
+  .s-star {
+    position: relative;
+    width: 5.9cqw;
+    height: 5.9cqw;
+  }
+  .s-star svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .s-star-line {
+    fill: none;
+    stroke: color-mix(in srgb, var(--color-navy) 26%, transparent);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+  }
+  .s-star-fill {
+    fill: var(--color-red);
+    stroke: var(--color-red);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+    will-change: transform, opacity;
+  }
+  .s-lines {
+    display: grid;
+    gap: 1.6cqw;
+    width: 100%;
+    margin-top: 4.2cqw;
+    padding: 2.8cqw;
+    border: 0.35cqw solid color-mix(in srgb, var(--color-navy) 16%, transparent);
+    border-radius: 2.6cqw;
+  }
+  .s-lines i {
+    height: 1.5cqw;
+    border-radius: 1cqw;
+    background: color-mix(in srgb, var(--color-navy) 16%, transparent);
+  }
+  .s-lines i:last-child {
+    width: 58%;
+  }
+  .s-post {
+    width: 100%;
+    margin-top: auto;
+    padding: 2.5cqw 0;
+    border-radius: 2.6cqw;
+    background: var(--color-navy);
+    color: var(--color-cream);
+    font-weight: 600;
+    font-size: 2.9cqw;
+    line-height: 1.2;
+  }
+
+  /* NFC card */
+  .s-card {
+    position: absolute;
+    left: 5cqw;
+    top: 46cqw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.8cqw;
+    width: 49cqw;
+    height: 30.8cqw;
+    border-radius: 3.6cqw;
+    background: var(--color-cream);
+    color: var(--color-navy);
+    box-shadow: 0 3cqw 8cqw rgb(0 0 0 / 0.45);
+    transform: rotate(-14deg);
+    z-index: 1;
+    will-change: transform, opacity;
+  }
+  .s-card-word {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 8.4cqw;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .s-card-arcs {
+    width: 6cqw;
+  }
+
+  /* Signal between card and phone */
+  .s-arcs {
+    position: absolute;
+    left: 40cqw;
+    top: 27cqw;
+    width: 15cqw;
+    overflow: visible;
+    transform: rotate(-22deg);
+    z-index: 3;
+  }
+
+  /* Starting frame while the animation is running (see src/scripts/motion.ts). */
+  :global(html.motion) [data-s-card] {
+    transform: translate(-20%, 26%) rotate(-24deg);
+  }
+  :global(html.motion) [data-s-review] {
+    transform: translateY(101%);
+  }
+  :global(html.motion) [data-s-star],
+  :global(html.motion) .s-arcs :global([data-s-arc]) {
+    opacity: 0;
+  }
+</style>

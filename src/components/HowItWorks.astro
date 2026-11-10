@@ -1,0 +1,46 @@
+---
+import StepArt from './StepArt.astro';
+import type { Dictionary } from '../i18n';
+
+interface Props {
+  t: Dictionary;
+}
+const { t } = Astro.props;
+---
+
+<section id="how" class="section">
+  <div class="container-x">
+    <header data-reveal>
+      <p class="label">{t.how.label}</p>
+      <h2 class="h2 mt-4">{t.how.title}</h2>
+    </header>
+
+    <ol class="steps mt-12 grid gap-12 lg:mt-16 lg:grid-cols-3 lg:gap-10">
+      {
+        t.how.steps.map((step, i) => (
+          <li class="step" style={`--i:${i}`} data-reveal>
+            <StepArt step={(i + 1) as 1 | 2 | 3} class="h-auto w-[10.5rem] text-cream lg:w-[12rem]" />
+            <div class="mt-7 border-t border-cream/16 pt-5">
+              <p class="font-display text-[0.8125rem] font-medium tracking-[0.08em] text-cream/55">
+                0{i + 1}
+              </p>
+              <h3 class="mt-2 text-[1.3125rem] leading-snug font-bold tracking-[-0.01em] lg:text-2xl">
+                {step.title}
+              </h3>
+              <p class="mt-3 max-w-[26rem] text-cream/75">{step.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  /* On wide screens the steps descend like a staircase, echoing the tilt of the card. */
+  @media (min-width: 64rem) {
+    .step {
+      margin-top: calc(var(--i) * 3.5rem);
+    }
+  }
+</style>

@@ -1,0 +1,77 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/logo.png';
+import Icon from './Icon.astro';
+import Skyline from './Skyline.astro';
+import LangSwitcher from './LangSwitcher.astro';
+import { site, telegramLink } from '../data/site';
+import type { Dictionary, Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+  t: Dictionary;
+}
+const { locale, t } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<section id="contact" class="relative isolate overflow-hidden border-t border-cream/10">
+  <div class="container-x relative z-10 pt-20 pb-40 lg:pt-32 lg:pb-60">
+    <div data-reveal>
+      <p class="label">{t.contact.label}</p>
+      <h2 class="contact-title mt-4 max-w-[52rem]">{t.contact.title}</h2>
+      <p class="lead mt-6 max-w-[31rem] text-cream/78">{t.contact.lead}</p>
+    </div>
+
+    <ul aria-label={t.a11y.contacts} class="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap" data-reveal>
+      <li>
+        <a href={telegramLink(t.messages.general)} class="btn btn-primary w-full sm:w-auto" data-contact-cta>
+          <Icon name="send" />
+          {t.cta.telegram}
+        </a>
+      </li>
+      <li>
+        <a href={`tel:${site.phone}`} class="btn btn-outline w-full sm:w-auto">
+          <Icon name="phone" size={18} />
+          <span class="sr-only">{t.contact.call}:</span>
+          {site.phoneDisplay}
+        </a>
+      </li>
+      <li>
+        <a href={site.instagram} rel="noopener" class="btn btn-outline w-full sm:w-auto">
+          <Icon name="instagram" size={18} />
+          <span class="sr-only">{t.contact.instagram}:</span>
+          {site.instagramHandle}
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <Skyline class="absolute inset-x-0 bottom-0 z-0 h-[clamp(7rem,17vw,13.75rem)] w-full" seed={11} />
+</section>
+
+<footer class="border-t border-cream/10 bg-navy pt-10 pb-32 lg:pb-10">
+  <div class="container-x flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-7">
+      <Image src={logo} alt="NFCity" width={88} densities={[1, 2, 3]} class="h-[2.125rem] w-auto self-start sm:self-auto" />
+      <p class="text-[0.9375rem] text-cream/66">
+        {t.footer.tagline}{' '}
+        <br class="sm:hidden" />
+        {t.footer.city}
+      </p>
+    </div>
+    <div class="flex items-center justify-between gap-6">
+      <LangSwitcher locale={locale} t={t} />
+      <p class="text-sm text-cream/66">&copy;&nbsp;{year} {site.name}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .contact-title {
+    font-size: clamp(1.875rem, 1rem + 4.4vw, 4.25rem);
+    font-weight: 800;
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+  }
+</style>

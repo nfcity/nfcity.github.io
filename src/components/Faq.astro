@@ -1,0 +1,109 @@
+---
+import type { Dictionary } from '../i18n';
+
+interface Props {
+  t: Dictionary;
+}
+const { t } = Astro.props;
+---
+
+<section id="faq" class="section">
+  <div class="container-x grid gap-10 lg:grid-cols-12">
+    <header class="lg:col-span-4" data-reveal>
+      <p class="label">{t.faq.label}</p>
+      <h2 class="h2 mt-4">{t.faq.title}</h2>
+    </header>
+
+    <div class="border-t border-cream/16 lg:col-span-7 lg:col-start-6">
+      {
+        t.faq.items.map((item, i) => (
+          <details class="faq-item border-b border-cream/16" open={i === 0} data-reveal>
+            <summary class="faq-q">
+              <h3 class="faq-q-text">{item.q}</h3>
+              <span class="faq-icon" aria-hidden="true" />
+            </summary>
+            <p class="faq-a">{item.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 4.5rem;
+    padding-block: 1.25rem;
+    list-style: none;
+  }
+  .faq-q::-webkit-details-marker {
+    display: none;
+  }
+  .faq-q-text {
+    font-family: var(--font-sans);
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.35;
+    text-wrap: pretty;
+  }
+  @media (min-width: 64rem) {
+    .faq-q-text {
+      font-size: 1.25rem;
+    }
+  }
+
+  /* Plus that settles into a minus when the answer is open. */
+  .faq-icon {
+    position: relative;
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+    opacity: 0.8;
+  }
+  .faq-icon::before,
+  .faq-icon::after {
+    content: '';
+    position: absolute;
+    border-radius: 1px;
+    background: currentColor;
+  }
+  .faq-icon::before {
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    margin-top: -1px;
+  }
+  .faq-icon::after {
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 100%;
+    margin-left: -1px;
+    transition: transform 0.35s var(--ease-soft);
+  }
+  .faq-item[open] .faq-icon::after {
+    transform: scaleY(0);
+  }
+
+  .faq-a {
+    max-width: 38rem;
+    padding: 0 2.5rem 1.75rem 0;
+    color: color-mix(in srgb, var(--color-cream) 76%, transparent);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .faq-item[open] .faq-a {
+      animation: faq-in 0.45s var(--ease-soft) both;
+    }
+  }
+  @keyframes faq-in {
+    from {
+      opacity: 0;
+      transform: translateY(-0.375rem);
+    }
+  }
+</style>

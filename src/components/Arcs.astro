@@ -1,0 +1,29 @@
+---
+// The three signal arcs from the logo. Red by default; pass `tone="current"`
+// to draw them in the surrounding text colour.
+interface Props {
+  class?: string;
+  tone?: 'red' | 'current';
+  arcAttr?: string;
+  [key: string]: unknown;
+}
+const { class: className, tone = 'red', arcAttr, ...rest } = Astro.props;
+const stroke = tone === 'red' ? 'var(--color-red)' : 'currentColor';
+const extra = arcAttr ? { [arcAttr]: '' } : {};
+---
+
+<svg
+  class={className}
+  viewBox="5 3 34 50"
+  fill="none"
+  stroke={stroke}
+  stroke-width="5.4"
+  stroke-linecap="round"
+  aria-hidden="true"
+  focusable="false"
+  {...rest}
+>
+  <path d="M9.46 20.61A12 12 0 0 1 9.46 35.39" {...extra}></path>
+  <path d="M18.12 13.83A23 23 0 0 1 18.12 42.17" {...extra}></path>
+  <path d="M26.79 7.06A34 34 0 0 1 26.79 48.94" {...extra}></path>
+</svg>

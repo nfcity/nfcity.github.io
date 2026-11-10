@@ -1,0 +1,64 @@
+---
+// Order button that stays within thumb's reach on phones.
+// It steps aside while the contact section's own button is on screen.
+import Icon from './Icon.astro';
+import { telegramLink } from '../data/site';
+import type { Dictionary } from '../i18n';
+
+interface Props {
+  t: Dictionary;
+}
+const { t } = Astro.props;
+---
+
+<div class="sticky-cta lg:hidden" data-sticky-cta>
+  <a href={telegramLink(t.messages.general)} class="btn btn-primary w-full">
+    <Icon name="send" />
+    {t.cta.telegram}
+  </a>
+</div>
+
+<style>
+  .sticky-cta {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 50;
+    padding: 0.75rem 1.25rem calc(0.75rem + env(safe-area-inset-bottom));
+    border-top: 1px solid color-mix(in srgb, var(--color-cream) 12%, transparent);
+    background: var(--color-navy);
+    transition:
+      transform 0.45s var(--ease-soft),
+      opacity 0.3s var(--ease-soft),
+      visibility 0s;
+  }
+  .sticky-cta .btn {
+    padding-inline: 0.75rem;
+  }
+  .sticky-cta[data-hidden] {
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      transform 0.45s var(--ease-soft),
+      opacity 0.3s var(--ease-soft),
+      visibility 0s 0.45s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sticky-cta,
+    .sticky-cta[data-hidden] {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-sticky-cta]');
+  const contactButton = document.querySelector('[data-contact-cta]');
+  if (bar && contactButton && 'IntersectionObserver' in window) {
+    new IntersectionObserver(
+      ([entry]) => bar.toggleAttribute('data-hidden', entry.isIntersecting),
+      { rootMargin: '0px 0px -80px 0px' },
+    ).observe(contactButton);
+  }
+</script>

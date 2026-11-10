@@ -1,0 +1,140 @@
+---
+import ProductArt from './ProductArt.astro';
+import Icon from './Icon.astro';
+import { products, telegramLink } from '../data/site';
+import { formatPrice, type Dictionary, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+  t: Dictionary;
+}
+const { locale, t } = Astro.props;
+---
+
+<section id="products" class="section bg-cream text-navy">
+  <div class="container-x">
+    <header class="max-w-[44rem]" data-reveal>
+      <p class="label">{t.products.label}</p>
+      <h2 class="h2 mt-4">{t.products.title}</h2>
+      <p class="lead mt-5 text-navy/75">{t.products.lead}</p>
+    </header>
+
+    <ul class="mt-11 grid gap-4 md:grid-cols-3 lg:mt-14 lg:gap-5">
+      {
+        products.map((product) => {
+          const item = t.products.items[product.id];
+          const price =
+            product.price === null
+              ? t.products.askPrice
+              : formatPrice(product.price, locale, t.products.currency);
+          return (
+            <li class:list={[product.featured && 'md:col-span-3']} data-reveal>
+              <article class:list={['product', product.featured && 'product-featured']}>
+                <div class="product-art">
+                  <ProductArt kind={product.id} label={`${t.products.placeholder}: ${item.name}`} />
+                </div>
+                <div class="product-body">
+                  <h3 class="product-name">{item.name}</h3>
+                  <p class="product-text">{item.text}</p>
+                  <div class="product-foot">
+                    <p class="product-price">{price}</p>
+                    <a
+                      href={telegramLink(t.messages[product.id])}
+                      class:list={['btn', product.featured ? 'btn-primary' : 'btn-outline']}
+                    >
+                      {t.products.order}
+                      <span class="sr-only">: {item.name}</span>
+                      <Icon name="arrow-right" size={18} />
+                    </a>
+                  </div>
+                </div>
+              </article>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .product {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 1.375rem;
+    background: var(--color-navy);
+    color: var(--color-cream);
+  }
+  .product-art {
+    background: var(--color-navy-2);
+  }
+  .product-art :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .product-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 1.5rem 1.375rem 1.375rem;
+  }
+  .product-name {
+    font-size: 1.1875rem;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+  .product-text {
+    margin-top: 0.75rem;
+    color: color-mix(in srgb, var(--color-cream) 76%, transparent);
+  }
+  .product-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 1.75rem;
+  }
+  .product-price {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+
+  @media (min-width: 48rem) {
+    .product-featured {
+      flex-direction: row;
+      align-items: stretch;
+    }
+    .product-featured .product-art {
+      display: grid;
+      flex: 0 0 52%;
+      place-items: center;
+    }
+    .product-featured .product-body {
+      justify-content: center;
+      padding: 2.5rem;
+    }
+    .product-featured .product-name {
+      font-size: clamp(1.5rem, 1rem + 1.6vw, 2.125rem);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+    .product-featured .product-text {
+      max-width: 28rem;
+      margin-top: 1rem;
+      font-size: 1.125rem;
+    }
+    .product-featured .product-foot {
+      justify-content: flex-start;
+      gap: 1.75rem;
+      margin-top: 0;
+      padding-top: 2.25rem;
+    }
+  }
+</style>
