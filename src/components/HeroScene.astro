@@ -168,8 +168,11 @@ const cardLayers = [1, 2];
   .s-phone-edge {
     transform: translateZ(calc(var(--i) * -0.6cqw));
   }
+  /* The face is given its own flat layer. Safari sorts the pieces of a 3D object
+     by depth, and without this it can put moving screen content behind the phone. */
   .s-phone-face {
     padding: 1.3cqw;
+    transform: translateZ(0);
   }
   .s-screen {
     position: relative;
@@ -226,7 +229,6 @@ const cardLayers = [1, 2];
     background: var(--color-cream);
     color: var(--color-navy);
     text-align: center;
-    will-change: transform;
   }
   .s-avatar {
     display: grid;
@@ -279,7 +281,6 @@ const cardLayers = [1, 2];
     stroke: var(--color-red);
     stroke-width: 1.6;
     stroke-linejoin: round;
-    will-change: transform, opacity;
   }
   .s-lines {
     display: grid;
@@ -341,6 +342,7 @@ const cardLayers = [1, 2];
     gap: 1.8cqw;
     background: var(--color-cream);
     color: var(--color-navy);
+    transform: translateZ(0);
   }
   .s-card-word {
     font-family: var(--font-display);

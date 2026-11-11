@@ -32,11 +32,20 @@ export function screenStory(timeline: gsap.core.Timeline, scene: HTMLElement) {
   const stars = scene.querySelectorAll('[data-s-star]');
   if (!review) return;
 
-  gsap.set(stars, { transformOrigin: '50% 50%' });
-  gsap.set(review, { y: 0, yPercent: 101 });
+  // Plain 2D transforms on purpose (force3D off). The screen sits inside a 3D phone,
+  // and Safari can lose track of the stacking order of screen content that gets its
+  // own 3D layer, leaving the review page hidden behind the lock screen.
+  const flat = { force3D: false };
+  gsap.set(stars, { transformOrigin: '50% 50%', ...flat });
+  gsap.set(review, { y: 0, yPercent: 101, ...flat });
 
   timeline
-    .fromTo(review, { yPercent: 101 }, { yPercent: 0, duration: 0.9 }, STORY.wake)
-    .fromTo(stars, { opacity: 0, scale: 0.55 }, { opacity: 1, scale: 1, duration: 0.45, stagger: 0.16 }, STORY.stars)
-    .to(review, { yPercent: 101, duration: 0.8, ease: 'power2.inOut' }, STORY.leave);
+    .fromTo(review, { yPercent: 101 }, { yPercent: 0, duration: 0.9, ...flat }, STORY.wake)
+    .fromTo(
+      stars,
+      { opacity: 0, scale: 0.55 },
+      { opacity: 1, scale: 1, duration: 0.45, stagger: 0.16, ...flat },
+      STORY.stars,
+    )
+    .to(review, { yPercent: 101, duration: 0.8, ease: 'power2.inOut', ...flat }, STORY.leave);
 }
