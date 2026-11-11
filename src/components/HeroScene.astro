@@ -400,6 +400,11 @@ const cardLayers = [1, 2];
   .s-world {
     transition: opacity 0.5s var(--ease-soft);
   }
+  /* Where the Three.js scene is on its way, the CSS one waits out of sight
+     (motion.ts brings it back if the 3D scene cannot start). */
+  :global(html.gl-first) .s-world {
+    opacity: 0;
+  }
   .s-stage:global(.is-gl) .s-world {
     opacity: 0;
     visibility: hidden;

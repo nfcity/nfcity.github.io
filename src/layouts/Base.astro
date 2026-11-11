@@ -107,8 +107,16 @@ const faq = {
         var root = document.documentElement;
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         root.classList.add('motion');
+        // Desktops with a mouse get the Three.js hero. Marking them now lets that scene
+        // fade in on its own, instead of swapping with the CSS one in front of the visitor.
+        if (
+          window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 64rem)').matches &&
+          (navigator.hardwareConcurrency || 4) >= 4
+        ) {
+          root.classList.add('gl-first');
+        }
         setTimeout(function () {
-          if (!window.__nfcityMotion) root.classList.remove('motion');
+          if (!window.__nfcityMotion) root.classList.remove('motion', 'gl-first');
         }, 3000);
       })();
     </script>

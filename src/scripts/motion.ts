@@ -62,7 +62,8 @@ function reveals() {
         opacity: 0,
         y: 24,
         duration: 1,
-        stagger: 0.08,
+        // Long enough that neighbours, such as the three product tiles, arrive one after another.
+        stagger: 0.12,
         overwrite: true,
         // Hand the elements back clean, so hover and FAQ motion start from nothing.
         clearProps: 'opacity,transform',
@@ -88,20 +89,34 @@ function heroScene() {
   const scene = document.querySelector<HTMLElement>('[data-scene]');
   if (!scene) return;
 
-  const runCss = () => cssHero(scene);
+  const root = document.documentElement;
+  // The CSS scene, for phones and as the fallback. It was held out of sight on
+  // desktops while the 3D scene loaded, so it is let back in here.
+  const runCss = () => {
+    root.classList.remove('gl-first');
+    cssHero(scene);
+  };
   if (!finePointer() || !canRun3d()) {
     runCss();
     return;
   }
 
+  // If the 3D scene is slow to arrive, show the still CSS scene in the meantime.
+  const patience = window.setTimeout(() => root.classList.remove('gl-first'), 2500);
   const observer = new IntersectionObserver(([entry]) => {
     if (!entry.isIntersecting) return;
     observer.disconnect();
     whenIdle(() =>
       import('./hero3d')
         .then(({ mountHero }) => mountHero(scene, runCss))
-        .then((started) => started || runCss())
-        .catch(runCss),
+        .then((started) => {
+          window.clearTimeout(patience);
+          if (!started) runCss();
+        })
+        .catch(() => {
+          window.clearTimeout(patience);
+          runCss();
+        }),
     );
   });
   observer.observe(scene);
