@@ -88,6 +88,7 @@ const navy = 'var(--color-navy)';
       </text>
 
       <g
+        class="art-arcs"
         transform="translate(152 33) scale(0.86)"
         fill="none"
         stroke="var(--color-red)"
@@ -101,3 +102,26 @@ const navy = 'var(--color-navy)';
     </g>
   </g>
 </svg>
+
+<style>
+  /* Where the 3D card is not running but there is a mouse, the drawn arcs pulse on hover. */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    :global(.tile:hover) .art-arcs path {
+      transform-box: fill-box;
+      transform-origin: 0% 50%;
+      animation: arc-pulse 0.85s var(--ease-soft) 2;
+    }
+    :global(.tile:hover) .art-arcs path:nth-child(2) {
+      animation-delay: 0.12s;
+    }
+    :global(.tile:hover) .art-arcs path:nth-child(3) {
+      animation-delay: 0.24s;
+    }
+  }
+  @keyframes arc-pulse {
+    45% {
+      transform: scale(1.16);
+      opacity: 0.65;
+    }
+  }
+</style>

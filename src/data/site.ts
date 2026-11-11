@@ -14,11 +14,18 @@ export const site = {
 export type ProductId = 'review' | 'business' | 'social' | 'menu';
 
 // price: a number in soʻm (for example 120000), or null to show "ask for price".
-export const products: { id: ProductId; price: number | null; featured?: boolean }[] = [
-  { id: 'review', price: null, featured: true },
-  { id: 'business', price: null },
-  { id: 'social', price: null },
-  { id: 'menu', price: null },
+// available: false shows the "available soon" badge instead of the price and order button.
+//            Switch it to true on the day you start selling that card.
+export const products: {
+  id: ProductId;
+  price: number | null;
+  available: boolean;
+  featured?: boolean;
+}[] = [
+  { id: 'review', price: null, available: true, featured: true },
+  { id: 'business', price: null, available: false },
+  { id: 'social', price: null, available: false },
+  { id: 'menu', price: null, available: false },
 ];
 
 /** Telegram link that opens the chat with a ready-made message. */

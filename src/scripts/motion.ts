@@ -5,15 +5,13 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
+import { createStory, screenStory, SOFT, STORY } from './hero-story';
 
 declare global {
   interface Window {
     __nfcityMotion?: boolean;
   }
 }
-
-/** GSAP's name for the curve behind --ease-soft in global.css: cubic-bezier(0.22, 1, 0.36, 1). */
-const SOFT = 'power4.out';
 
 if (document.documentElement.classList.contains('motion')) {
   window.__nfcityMotion = true;
@@ -26,11 +24,14 @@ if (document.documentElement.classList.contains('motion')) {
   faq();
 
   // Pointer effects only where there is a real mouse or trackpad.
-  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    tiltTiles();
-    heroTilt();
-    card3d();
+  if (finePointer()) {
+    liftTiles();
+    cards3d();
   }
+}
+
+function finePointer() {
+  return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 }
 
 /** Lenis smooths wheel and trackpad scrolling; touch scrolling stays native. */
@@ -77,54 +78,105 @@ function reveals() {
   });
 }
 
-/** Card reaches the phone, arcs pulse, the review page opens and five stars fill. */
+/**
+ * The hero: a card taps the phone, the arcs pulse, the review page opens, five stars fill.
+ * Phones and tablets run it on the CSS 3D scene. Desktops with a mouse swap in the
+ * Three.js scene (fetched once the hero is on screen and the page is idle) and fall
+ * back to the CSS scene if that cannot start.
+ */
 function heroScene() {
   const scene = document.querySelector<HTMLElement>('[data-scene]');
   if (!scene) return;
 
-  const card = scene.querySelector('[data-s-card]');
-  const arcs = scene.querySelectorAll('[data-s-arc]');
-  const review = scene.querySelector('[data-s-review]');
-  const stars = scene.querySelectorAll('[data-s-star]');
-  if (!card || !review) return;
+  const runCss = () => cssHero(scene);
+  if (!finePointer() || !canRun3d()) {
+    runCss();
+    return;
+  }
 
-  // Text layers move with transform only, never opacity, so they stay fully legible.
-  // Keep `away` in step with the starting frame in HeroScene.astro.
-  const away = { xPercent: -20, yPercent: 26, rotation: -24 };
-  const pulseIn = { opacity: 1, scale: 1, duration: 0.5, stagger: 0.13 };
+  const observer = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    observer.disconnect();
+    whenIdle(() =>
+      import('./hero3d')
+        .then(({ mountHero }) => mountHero(scene, runCss))
+        .then((started) => started || runCss())
+        .catch(runCss),
+    );
+  });
+  observer.observe(scene);
+}
+
+/** Runs a task once the page has finished loading and the browser has a quiet moment. */
+function whenIdle(task: () => void) {
+  const run = () =>
+    'requestIdleCallback' in window ? window.requestIdleCallback(task, { timeout: 1500 }) : setTimeout(task, 200);
+  if (document.readyState === 'complete') run();
+  else window.addEventListener('load', run, { once: true });
+}
+
+/** The story loop on the CSS 3D scene, plus a pointer tilt where there is a mouse. */
+function cssHero(scene: HTMLElement) {
+  const card = scene.querySelector<HTMLElement>('[data-s-card]');
+  const phone = scene.querySelector<HTMLElement>('[data-s-phone]');
+  const world = scene.querySelector<HTMLElement>('[data-s-world]');
+  const arcs = scene.querySelectorAll('[data-s-arc]');
+  if (!card || !phone) return;
+
+  // Depth is given in the scene's own units (1% of its width), so it scales with the scene.
+  const depth = (units: number) => () => (scene.clientWidth / 100) * units;
+  // Keep these two poses in step with the card's transforms in HeroScene.astro.
+  const away = { xPercent: -20, yPercent: 26, z: depth(5), rotation: -24, rotationY: -18, rotationX: 14 };
+  const tapped = { xPercent: 0, yPercent: 0, z: depth(-11), rotation: -14, rotationY: -6, rotationX: 5 };
 
   gsap.set(arcs, { transformOrigin: '0% 50%' });
-  gsap.set(stars, { transformOrigin: '50% 50%' });
-  // Take over from the CSS starting frame, in percentages so it scales with the scene.
   gsap.set(card, { x: 0, y: 0, ...away });
-  gsap.set(review, { y: 0, yPercent: 101 });
+  gsap.set(phone, { rotationY: -12, rotationX: 4 });
 
-  const tl = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 0.9 });
-
-  tl.fromTo(card, away, { xPercent: 0, yPercent: 0, rotation: -14, duration: 1.4, ease: 'power2.inOut' }, 0.3)
-    // two calm pulses
-    .fromTo(arcs, { opacity: 0, scale: 0.72 }, pulseIn, 1.4)
-    .to(arcs, { opacity: 0, duration: 0.5, stagger: 0.13, ease: 'power1.inOut' }, 2.1)
-    .fromTo(arcs, { opacity: 0, scale: 0.72 }, { ...pulseIn, immediateRender: false }, 2.75)
-    .to(arcs, { opacity: 0, duration: 0.55, stagger: 0.13, ease: 'power1.inOut' }, 3.55)
-    // the review page slides up and the stars fill one by one
-    .fromTo(review, { yPercent: 101 }, { yPercent: 0, duration: 0.95 }, 2.85)
-    .fromTo(stars, { opacity: 0, scale: 0.55 }, { opacity: 1, scale: 1, duration: 0.5, stagger: 0.17 }, 3.6)
-    // hold on the result, then reset quietly
-    .to(review, { yPercent: 101, duration: 0.85, ease: 'power2.inOut' }, '+=2.8')
-    .to(card, { ...away, duration: 1.3, ease: 'power2.inOut' }, '<');
+  const story = createStory();
+  story
+    .fromTo(card, away, { ...tapped, duration: STORY.glideTime, ease: 'power3.inOut' }, STORY.glide)
+    // the tap: the phone gives a little and settles
+    .to(phone, { rotationY: -13.4, duration: 0.16, ease: 'power2.out' }, STORY.tap - 0.04)
+    .to(phone, { rotationY: -12, duration: 0.9, ease: 'power2.out' }, STORY.tap + 0.12);
+  STORY.pulses.forEach((at) => {
+    story
+      .fromTo(arcs, { opacity: 0, scale: 0.72 }, { opacity: 1, scale: 1, duration: 0.5, stagger: 0.13, immediateRender: false }, at)
+      .to(arcs, { opacity: 0, duration: 0.5, stagger: 0.13, ease: 'power1.inOut' }, at + 0.68);
+  });
+  screenStory(story, scene);
+  story.to(card, { ...away, duration: STORY.leaveTime, ease: 'power2.inOut' }, STORY.leave);
 
   // Handy while tuning the timing in `npm run dev`; stripped from the real build.
-  if (import.meta.env.DEV) Object.assign(window, { __nfcityScene: tl });
+  if (import.meta.env.DEV) Object.assign(window, { __nfcityScene: story });
 
   // Only run while the scene is on screen.
   const trigger = ScrollTrigger.create({
     trigger: scene,
     start: 'top bottom',
     end: 'bottom top',
-    onToggle: (self) => (self.isActive ? tl.play() : tl.pause()),
+    onToggle: (self) => (self.isActive ? story.play() : story.pause()),
   });
-  if (trigger.isActive) tl.play();
+  if (trigger.isActive) story.play();
+
+  // With a mouse, the whole scene leans towards the pointer, up to about ten degrees.
+  const hero = scene.closest('section');
+  if (!world || !hero || !finePointer()) return;
+  const glide = { duration: 1.1, ease: SOFT };
+  const rotX = gsap.quickTo(world, 'rotationX', glide);
+  const rotY = gsap.quickTo(world, 'rotationY', glide);
+  const clamp = gsap.utils.clamp(-1, 1);
+  const centre = () => {
+    rotX(0);
+    rotY(0);
+  };
+  hero.addEventListener('pointermove', (event) => {
+    const box = scene.getBoundingClientRect();
+    rotY(clamp((event.clientX - (box.left + box.width / 2)) / (window.innerWidth / 2)) * 10);
+    rotX(clamp((event.clientY - (box.top + box.height / 2)) / (window.innerHeight / 2)) * -7);
+  });
+  hero.addEventListener('pointerleave', centre);
+  document.documentElement.addEventListener('pointerleave', centre);
 }
 
 /**
@@ -215,102 +267,53 @@ function faq() {
 }
 
 /**
- * Product tiles lift towards the pointer; the three smaller ones also tilt,
- * and the card drawing inside slides a little the other way for depth.
+ * The large Google review tile rises a little under the pointer.
+ * The three smaller tiles stay put, so they always line up; their cards do the moving.
  */
-function tiltTiles() {
-  gsap.utils.toArray<HTMLElement>('[data-tilt]').forEach((tile) => {
+function liftTiles() {
+  const tiles = gsap.utils.toArray<HTMLElement>('[data-tile="lift"]').flatMap((tile) => {
     const card = tile.firstElementChild as HTMLElement | null;
-    if (!card) return;
-    const tilts = tile.dataset.tilt === 'tilt';
-    const art = tilts ? tile.querySelector<HTMLElement>('[data-tilt-art]') : null;
-    const glide = { duration: 0.8, ease: SOFT };
-
-    gsap.set(card, { transformPerspective: 900 });
-    const lift = gsap.quickTo(card, 'y', glide);
-    const rotX = gsap.quickTo(card, 'rotationX', glide);
-    const rotY = gsap.quickTo(card, 'rotationY', glide);
-    const artX = art && gsap.quickTo(art, 'x', glide);
-    const artY = art && gsap.quickTo(art, 'y', glide);
-
-    tile.addEventListener('pointermove', (event) => {
-      const box = tile.getBoundingClientRect();
-      const x = (event.clientX - box.left) / box.width - 0.5;
-      const y = (event.clientY - box.top) / box.height - 0.5;
-      tile.classList.add('is-hover');
-      lift(tilts ? -8 : -5);
-      if (!tilts) return;
-      rotY(x * 7);
-      rotX(y * -6);
-      artX?.(x * -12);
-      artY?.(y * -9);
-    });
-    tile.addEventListener('pointerleave', () => {
+    if (!card) return [];
+    const lift = gsap.quickTo(card, 'y', { duration: 0.8, ease: SOFT });
+    const rest = () => {
       tile.classList.remove('is-hover');
       lift(0);
-      rotX(0);
-      rotY(0);
-      artX?.(0);
-      artY?.(0);
+    };
+    tile.addEventListener('pointerenter', () => {
+      tile.classList.add('is-hover');
+      lift(-5);
     });
+    tile.addEventListener('pointerleave', rest);
+    return [rest];
   });
-}
-
-/** The hero scene leans a few degrees towards the pointer, with the phone drifting slightly for depth. */
-function heroTilt() {
-  const scene = document.querySelector<HTMLElement>('[data-scene]');
-  const stage = scene?.querySelector<HTMLElement>('[data-s-stage]');
-  const phone = scene?.querySelector<HTMLElement>('[data-s-phone]');
-  const hero = scene?.closest('section');
-  if (!scene || !stage || !phone || !hero) return;
-
-  const glide = { duration: 1.1, ease: SOFT };
-  gsap.set(stage, { transformPerspective: 1100 });
-  const rotX = gsap.quickTo(stage, 'rotationX', glide);
-  const rotY = gsap.quickTo(stage, 'rotationY', glide);
-  const phoneX = gsap.quickTo(phone, 'x', glide);
-  const phoneY = gsap.quickTo(phone, 'y', glide);
-  const clamp = gsap.utils.clamp(-1, 1);
-
-  hero.addEventListener('pointermove', (event) => {
-    const box = scene.getBoundingClientRect();
-    const x = clamp((event.clientX - (box.left + box.width / 2)) / (window.innerWidth / 2));
-    const y = clamp((event.clientY - (box.top + box.height / 2)) / (window.innerHeight / 2));
-    rotY(x * 6);
-    rotX(y * -5);
-    phoneX(x * 6);
-    phoneY(y * 5);
-  });
-  hero.addEventListener('pointerleave', () => {
-    rotX(0);
-    rotY(0);
-    phoneX(0);
-    phoneY(0);
-  });
+  // If the pointer leaves the page altogether, nothing is left hanging mid-hover.
+  const restAll = () => tiles.forEach((rest) => rest());
+  document.documentElement.addEventListener('pointerleave', restAll);
+  window.addEventListener('blur', restAll);
 }
 
 /**
- * The interactive 3D card. Three.js is a large library, so it is fetched only on
- * capable desktops, and only when the card's tile is about to scroll into view.
- * Phones, low-power devices and reduced-motion visitors keep the drawn mockup.
+ * The interactive 3D cards in the product tiles. Three.js is a large library, so it
+ * is fetched only on capable desktops, and only when the tiles are about to scroll
+ * into view. Phones, low-power devices and reduced-motion visitors keep the drawn cards.
  */
-function card3d() {
-  const host = document.querySelector<HTMLElement>('[data-card3d]');
-  if (!host || !canRun3d()) return;
+function cards3d() {
+  const hosts = gsap.utils.toArray<HTMLElement>('[data-card3d]');
+  if (!hosts.length || !canRun3d()) return;
 
   const observer = new IntersectionObserver(
-    ([entry]) => {
-      if (!entry.isIntersecting) return;
+    (entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
       observer.disconnect();
-      import('./card3d')
-        .then(({ mountCard }) => mountCard(host))
+      import('./cards3d')
+        .then(({ mountCards }) => mountCards(hosts))
         .catch(() => {
-          /* keep the drawn mockup */
+          /* keep the drawn mockups */
         });
     },
     { rootMargin: '500px 0px' },
   );
-  observer.observe(host);
+  hosts.forEach((host) => observer.observe(host));
 }
 
 function canRun3d() {

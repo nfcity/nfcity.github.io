@@ -1,8 +1,12 @@
 ---
-// The signature moment: a card reaches the phone, the signal arcs pulse,
-// and a five-star review page opens. Built from plain HTML layers so every
-// moving part animates with transform and opacity only.
-// Without scripts, or with reduced motion, this markup already shows the final frame.
+// The signature moment: a card taps the phone, the signal arcs pulse, and a
+// five-star review page opens on the screen.
+//
+// This markup is the CSS 3D version: a phone and a card with real thickness, built
+// from stacked layers. Phones and tablets use it as it is. On desktops with a mouse,
+// src/scripts/hero3d.ts swaps the phone body and card for a Three.js scene and keeps
+// this same HTML screen on the 3D phone, so the text stays sharp.
+// Without scripts, or with reduced motion, it shows a still 3D pose of the final frame.
 import Arcs from './Arcs.astro';
 import type { Dictionary } from '../i18n';
 
@@ -12,50 +16,67 @@ interface Props {
 const { t } = Astro.props;
 const star =
   'M12 2.9l2.72 5.6 6.13.86-4.45 4.3 1.07 6.1L12 16.85 6.53 19.76l1.07-6.1-4.45-4.3 6.13-.86z';
+// Stacked copies of each outline, pushed back step by step, give the thickness.
+const phoneLayers = [1, 2, 3, 4, 5, 6];
+const cardLayers = [1, 2];
 ---
 
 <div class="scene" data-scene role="img" aria-label={t.hero.sceneAlt}>
   <div class="s-stage" data-s-stage aria-hidden="true">
-    <div class="s-card" data-s-card>
-      <span class="s-card-word">NFC</span>
-      <Arcs class="s-card-arcs" />
-    </div>
+    <div class="s-world" data-s-world>
+      <span class="s-shadow"></span>
 
-    <div class="s-phone" data-s-phone>
-      <span class="s-notch"></span>
-      <div class="s-screen">
-        <div class="s-idle">
-          <span class="s-idle-time">10:45</span>
-          <span class="s-idle-bar"></span>
-        </div>
-
-        <div class="s-review" data-s-review>
-          <span class="s-avatar">
-            <Arcs class="s-avatar-arcs" tone="current" />
-          </span>
-          <span class="s-name">{t.hero.sceneBusiness}</span>
-          <span class="s-rate">{t.hero.sceneRate}</span>
-          <span class="s-stars">
-            {
-              [0, 1, 2, 3, 4].map(() => (
-                <span class="s-star">
-                  <svg viewBox="0 0 24 24" class="s-star-line">
-                    <path d={star} />
-                  </svg>
-                  <svg viewBox="0 0 24 24" class="s-star-fill" data-s-star>
-                    <path d={star} />
-                  </svg>
-                </span>
-              ))
-            }
-          </span>
-          <span class="s-lines"><i></i><i></i><i></i></span>
-          <span class="s-post">{t.hero.scenePost}</span>
+      <div class="s-float s-float-card">
+        <div class="s-card" data-s-card>
+          {cardLayers.map((i) => <i class="s-card-edge" style={`--i:${i}`} />)}
+          <div class="s-card-face">
+            <span class="s-card-word">NFC</span>
+            <Arcs class="s-card-arcs" />
+          </div>
         </div>
       </div>
-    </div>
 
-    <Arcs class="s-arcs" arcAttr="data-s-arc" />
+      <div class="s-float s-float-phone">
+        <div class="s-phone" data-s-phone>
+          {phoneLayers.map((i) => <i class="s-phone-edge" style={`--i:${i}`} />)}
+          <div class="s-phone-face" data-s-face>
+            <div class="s-screen" data-s-screen>
+              <span class="s-notch"></span>
+              <div class="s-idle">
+                <span class="s-idle-time">10:45</span>
+                <span class="s-idle-bar"></span>
+              </div>
+
+              <div class="s-review" data-s-review>
+                <span class="s-avatar">
+                  <Arcs class="s-avatar-arcs" tone="current" />
+                </span>
+                <span class="s-name">{t.hero.sceneBusiness}</span>
+                <span class="s-rate">{t.hero.sceneRate}</span>
+                <span class="s-stars">
+                  {
+                    [0, 1, 2, 3, 4].map(() => (
+                      <span class="s-star">
+                        <svg viewBox="0 0 24 24" class="s-star-line">
+                          <path d={star} />
+                        </svg>
+                        <svg viewBox="0 0 24 24" class="s-star-fill" data-s-star>
+                          <path d={star} />
+                        </svg>
+                      </span>
+                    ))
+                  }
+                </span>
+                <span class="s-lines"><i></i><i></i><i></i></span>
+                <span class="s-post">{t.hero.scenePost}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Arcs class="s-arcs" arcAttr="data-s-arc" />
+    </div>
   </div>
 </div>
 
@@ -79,31 +100,76 @@ const star =
   .s-stage {
     position: relative;
     aspect-ratio: 100 / 88;
+    perspective: 300cqw;
+  }
+  .s-world,
+  .s-float,
+  .s-phone,
+  .s-card {
+    transform-style: preserve-3d;
+  }
+  .s-world,
+  .s-float {
+    position: absolute;
+    inset: 0;
   }
 
-  /* Phone */
+  /* Idle float: the phone and the card drift slowly, out of step with each other. */
+  @media (prefers-reduced-motion: no-preference) {
+    .s-float-phone {
+      transform-origin: 72.5% 50%;
+      animation: s-drift-phone 7.5s ease-in-out infinite;
+    }
+    .s-float-card {
+      transform-origin: 30% 70%;
+      animation: s-drift-card 6.2s ease-in-out -2.4s infinite;
+    }
+  }
+  @keyframes s-drift-phone {
+    50% {
+      transform: translate3d(0, -1.5cqw, 0) rotateZ(0.7deg) rotateX(1.5deg);
+    }
+  }
+  @keyframes s-drift-card {
+    50% {
+      transform: translate3d(0, -1.9cqw, 0) rotateZ(-1.1deg) rotateY(2deg);
+    }
+  }
+
+  /* Soft contact shadow under both objects. */
+  .s-shadow {
+    position: absolute;
+    left: 12cqw;
+    top: 84cqw;
+    width: 82cqw;
+    height: 11cqw;
+    background: radial-gradient(closest-side, rgb(0 0 0 / 0.5), transparent);
+    transform: translateZ(-9cqw);
+    pointer-events: none;
+  }
+
+  /* Phone: navy body, cream frame. */
   .s-phone {
     position: absolute;
     left: 52cqw;
     top: 2cqw;
     width: 41cqw;
     height: 84cqw;
-    padding: 1.3cqw;
+    transform: rotateY(-12deg) rotateX(4deg);
+  }
+  .s-phone-edge,
+  .s-phone-face {
+    position: absolute;
+    inset: 0;
     border: 0.75cqw solid var(--color-cream);
     border-radius: 7.6cqw;
     background: var(--color-navy-2);
-    z-index: 2;
   }
-  .s-notch {
-    position: absolute;
-    top: 3cqw;
-    left: 50%;
-    width: 10cqw;
-    height: 2.4cqw;
-    margin-left: -5cqw;
-    border-radius: 2cqw;
-    background: var(--color-navy);
-    z-index: 3;
+  .s-phone-edge {
+    transform: translateZ(calc(var(--i) * -0.6cqw));
+  }
+  .s-phone-face {
+    padding: 1.3cqw;
   }
   .s-screen {
     position: relative;
@@ -111,6 +177,17 @@ const star =
     overflow: hidden;
     border-radius: 5.6cqw;
     background: #070a35;
+  }
+  .s-notch {
+    position: absolute;
+    top: 0.95cqw;
+    left: 50%;
+    width: 10cqw;
+    height: 2.4cqw;
+    margin-left: -5cqw;
+    border-radius: 2cqw;
+    background: var(--color-navy);
+    z-index: 3;
   }
   .s-idle {
     position: absolute;
@@ -233,24 +310,37 @@ const star =
     line-height: 1.2;
   }
 
-  /* NFC card */
+  /* NFC card. Its resting place is behind the phone's lower left edge: the tap. */
   .s-card {
     position: absolute;
     left: 5cqw;
     top: 46cqw;
+    width: 49cqw;
+    height: 30.8cqw;
+    /* Same order GSAP writes transforms in, so the handover from CSS is seamless. */
+    transform: translate3d(0, 0, -11cqw) rotate(-14deg) rotateY(-6deg) rotateX(5deg);
+    will-change: transform;
+  }
+  .s-card-edge,
+  .s-card-face {
+    position: absolute;
+    inset: 0;
+    border-radius: 3.6cqw;
+  }
+  .s-card-edge {
+    background: var(--color-cream-2);
+    transform: translateZ(calc(var(--i) * -0.3cqw));
+  }
+  .s-card-edge:last-of-type {
+    box-shadow: 0 3cqw 8cqw rgb(0 0 0 / 0.45);
+  }
+  .s-card-face {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 1.8cqw;
-    width: 49cqw;
-    height: 30.8cqw;
-    border-radius: 3.6cqw;
     background: var(--color-cream);
     color: var(--color-navy);
-    box-shadow: 0 3cqw 8cqw rgb(0 0 0 / 0.45);
-    transform: rotate(-14deg);
-    z-index: 1;
-    will-change: transform, opacity;
   }
   .s-card-word {
     font-family: var(--font-display);
@@ -270,13 +360,12 @@ const star =
     top: 27cqw;
     width: 15cqw;
     overflow: visible;
-    transform: rotate(-22deg);
-    z-index: 3;
+    transform: translateZ(1.5cqw) rotate(-22deg);
   }
 
-  /* Starting frame while the animation is running (see src/scripts/motion.ts). */
+  /* Starting frame while the story loop is running (see src/scripts/motion.ts). */
   :global(html.motion) [data-s-card] {
-    transform: translate(-20%, 26%) rotate(-24deg);
+    transform: translate(-20%, 26%) translate3d(0, 0, 5cqw) rotate(-24deg) rotateY(-18deg) rotateX(14deg);
   }
   :global(html.motion) [data-s-review] {
     transform: translateY(101%);
@@ -284,5 +373,46 @@ const star =
   :global(html.motion) [data-s-star],
   :global(html.motion) .s-arcs :global([data-s-arc]) {
     opacity: 0;
+  }
+
+  /* Desktop: the Three.js scene takes over the phone body, the card, the arcs and
+     the shadow. The HTML screen is moved onto the 3D phone (see hero3d.ts). */
+  .s-stage :global(.s-gl),
+  .s-stage :global(.s-gl-screen) {
+    position: absolute;
+    left: -24cqw;
+    top: -24cqw;
+    width: 148cqw;
+    height: 136cqw;
+    pointer-events: none;
+  }
+  .s-stage :global(.s-gl) {
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.7s var(--ease-soft);
+  }
+  .s-stage :global(.s-gl-screen) {
+    z-index: 1;
+  }
+  .s-stage:global(.is-gl) :global(.s-gl) {
+    opacity: 1;
+  }
+  .s-world {
+    transition: opacity 0.5s var(--ease-soft);
+  }
+  .s-stage:global(.is-gl) .s-world {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.5s var(--ease-soft),
+      visibility 0s 0.5s;
+  }
+  .s-stage:global(.is-gl) .s-float {
+    animation-play-state: paused;
+  }
+  /* On the 3D phone the screen is its own layer and needs its size spelled out. */
+  .s-screen:global(.is-gl) {
+    width: 36.9cqw;
+    height: 79.9cqw;
   }
 </style>

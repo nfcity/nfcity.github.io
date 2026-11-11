@@ -1,9 +1,12 @@
 ---
 import ProductArt from './ProductArt.astro';
 import Icon from './Icon.astro';
-import cardFront from '../assets/card/front.webp';
+import frontReview from '../assets/card/front-review.webp';
+import frontBusiness from '../assets/card/front-business.webp';
+import frontSocial from '../assets/card/front-social.webp';
+import frontMenu from '../assets/card/front-menu.webp';
 import cardBack from '../assets/card/back.webp';
-import { products, telegramLink } from '../data/site';
+import { products, telegramLink, type ProductId } from '../data/site';
 import { formatPrice, type Dictionary, type Locale } from '../i18n';
 
 interface Props {
@@ -11,6 +14,14 @@ interface Props {
   t: Dictionary;
 }
 const { locale, t } = Astro.props;
+
+// Faces of the 3D cards (desktop). Built by scripts/make-card-textures.mjs.
+const fronts: Record<ProductId, string> = {
+  review: frontReview.src,
+  business: frontBusiness.src,
+  social: frontSocial.src,
+  menu: frontMenu.src,
+};
 ---
 
 <section id="products" class="section bg-cream text-navy">
@@ -23,7 +34,7 @@ const { locale, t } = Astro.props;
 
     <ul class="mt-11 grid gap-4 md:grid-cols-3 lg:mt-14 lg:gap-5">
       {
-        products.map((product) => {
+        products.map((product, index) => {
           const item = t.products.items[product.id];
           const price =
             product.price === null
@@ -31,33 +42,39 @@ const { locale, t } = Astro.props;
               : formatPrice(product.price, locale, t.products.currency);
           return (
             <li class:list={[product.featured && 'md:col-span-3']} data-reveal>
-              <div class="tile" data-tilt={product.featured ? 'lift' : 'tilt'}>
+              <div class="tile" data-tile={product.featured ? 'lift' : ''}>
                 <article class:list={['product', product.featured && 'product-featured']}>
                   <div
                     class="product-art"
-                    {...(product.featured
-                      ? { 'data-card3d': '', 'data-front': cardFront.src, 'data-back': cardBack.src }
-                      : {})}
+                    style={`--float-delay:${index * -1.7}s`}
+                    data-card3d
+                    data-front={fronts[product.id]}
+                    data-back={cardBack.src}
+                    {...(product.featured ? { 'data-turn': '' } : {})}
                   >
-                    <ProductArt
-                      kind={product.id}
-                      label={`${t.products.placeholder}: ${item.name}`}
-                      data-tilt-art
-                    />
+                    <ProductArt kind={product.id} label={`${t.products.placeholder}: ${item.name}`} />
                   </div>
                   <div class="product-body">
                     <h3 class="product-name">{item.name}</h3>
                     <p class="product-text">{item.text}</p>
                     <div class="product-foot">
-                      <p class="product-price">{price}</p>
-                      <a
-                        href={telegramLink(t.messages[product.id])}
-                        class:list={['btn', product.featured ? 'btn-primary' : 'btn-outline']}
-                      >
-                        {t.products.order}
-                        <span class="sr-only">: {item.name}</span>
-                        <Icon name="arrow-right" size={18} />
-                      </a>
+                      {
+                        product.available ? (
+                          <>
+                            <p class="product-price">{price}</p>
+                            <a
+                              href={telegramLink(t.messages[product.id])}
+                              class:list={['btn', product.featured ? 'btn-primary' : 'btn-outline']}
+                            >
+                              {t.products.order}
+                              <span class="sr-only">: {item.name}</span>
+                              <Icon name="arrow-right" size={18} />
+                            </a>
+                          </>
+                        ) : (
+                          <p class="product-soon">{t.products.soon}</p>
+                        )
+                      }
                     </div>
                   </div>
                 </article>
@@ -71,7 +88,7 @@ const { locale, t } = Astro.props;
 </section>
 
 <style>
-  /* Wrapper that carries the hover shadow, so the tile itself can lift and tilt above it.
+  /* Wrapper that carries the hover shadow of the large tile, so the tile can lift above it.
      The shadow is always painted and only its opacity changes. */
   .tile {
     position: relative;
@@ -107,6 +124,28 @@ const { locale, t } = Astro.props;
     position: relative;
     background: var(--color-navy-2);
   }
+  .product-art :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: opacity 0.6s var(--ease-soft);
+  }
+
+  /* The drawn card floats gently; each tile starts at a different point in the cycle. */
+  @media (prefers-reduced-motion: no-preference) {
+    .product-art :global(svg) {
+      animation: art-float 7s ease-in-out var(--float-delay, 0s) infinite;
+    }
+    .product-art:global(.is-3d) :global(svg) {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes art-float {
+    50% {
+      transform: translateY(-2.2%) rotate(0.6deg);
+    }
+  }
+
   /* The 3D card (desktop only) is drawn over the same box as the drawn mockup,
      which stays underneath as the fallback and for screen readers. */
   .product-art :global(canvas) {
@@ -117,20 +156,13 @@ const { locale, t } = Astro.props;
     opacity: 0;
     transition: opacity 0.9s var(--ease-soft);
   }
-  .product-art :global(svg) {
-    transition: opacity 0.6s var(--ease-soft);
-  }
   .product-art:global(.is-3d) :global(canvas) {
     opacity: 1;
   }
   .product-art:global(.is-3d) :global(svg) {
     opacity: 0;
   }
-  .product-art :global(svg) {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
+
   .product-body {
     display: flex;
     flex: 1;
@@ -160,6 +192,18 @@ const { locale, t } = Astro.props;
     font-family: var(--font-display);
     font-size: 0.9375rem;
     font-weight: 500;
+  }
+  /* "Available soon": the site's outline-button shape at badge size, in the brand red. */
+  .product-soon {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding: 0.375rem 0.875rem;
+    border: 1.5px solid var(--color-red);
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.2;
   }
 
   @media (min-width: 48rem) {

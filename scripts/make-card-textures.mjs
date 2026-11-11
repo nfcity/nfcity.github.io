@@ -1,4 +1,4 @@
-// Builds the front and back faces of the 3D card (src/assets/card/*.webp).
+// Builds the faces of the 3D product cards (src/assets/card/*.webp).
 // Run: node scripts/make-card-textures.mjs
 //
 // The skyline artwork in src/assets/card/source/ was generated with Higgsfield.
@@ -97,22 +97,43 @@ async function wordmarkBox() {
   return { left: 0, top, width: right + 1, height: bottom - top + 1 };
 }
 
-// ---- Front: cream face, laid out like the drawn mockup on the site ----------
+// ---- Fronts: cream faces, laid out like the drawn mockups on the site -------
+// One per product. The red signal arcs are left off on purpose: the 3D card
+// draws them as their own layer so they can pulse.
 const S = W / 196; // the mockup card is 196 x 124 units
+const navy = hex(NAVY);
 const star = 'M12 2.9l2.72 5.6 6.13.86-4.45 4.3 1.07 6.1L12 16.85 6.53 19.76l1.07-6.1-4.45-4.3 6.13-.86z';
-const frontMarks = Buffer.from(`
-<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
-  <g transform="scale(${S})">
-    <g fill="${hex(NAVY)}">
-      ${[0, 1, 2, 3, 4].map((i) => `<path d="${star}" transform="translate(${16 + i * 25} 38) scale(0.96)"/>`).join('')}
-    </g>
-    <g transform="translate(152 33) scale(0.86)" fill="none" stroke="${RED}" stroke-width="5.4" stroke-linecap="round">
-      <path d="M9.46 20.61A12 12 0 0 1 9.46 35.39"/>
-      <path d="M18.12 13.83A23 23 0 0 1 18.12 42.17"/>
-      <path d="M26.79 7.06A34 34 0 0 1 26.79 48.94"/>
-    </g>
-  </g>
-</svg>`);
+
+// The "@" on the Instagram / Telegram card, as an outline in Unbounded 800.
+const heavy = fontkit.openSync('node_modules/@fontsource/unbounded/files/unbounded-latin-800-normal.woff');
+const at = heavy.layout('@').glyphs[0];
+const atScale = 44 / heavy.unitsPerEm;
+
+const marks = {
+  review: [0, 1, 2, 3, 4]
+    .map((i) => `<path d="${star}" transform="translate(${16 + i * 25} 38) scale(0.96)"/>`)
+    .join(''),
+  business: `
+    <circle cx="34" cy="50" r="17"/>
+    <rect x="62" y="38" width="66" height="8" rx="4"/>
+    <rect x="62" y="54" width="42" height="6" rx="3" opacity="0.4"/>`,
+  social: `
+    <path transform="translate(14 67) scale(${atScale} ${-atScale})" d="${at.path.toSVG()}"/>
+    <rect x="66" y="38" width="68" height="8" rx="4"/>
+    <rect x="66" y="54" width="44" height="6" rx="3" opacity="0.4"/>`,
+  menu: [
+    [30, 58],
+    [46, 42],
+    [62, 64],
+  ]
+    .map(
+      ([y, w]) => `
+    <rect x="16" y="${y}" width="${w}" height="6" rx="3"/>
+    <rect x="124" y="${y}" width="18" height="6" rx="3" opacity="0.4"/>
+    <path d="M${24 + w} ${y + 3}H116" fill="none" stroke="${navy}" stroke-width="1.6" stroke-dasharray="0.1 5" stroke-linecap="round" opacity="0.5"/>`,
+    )
+    .join(''),
+};
 
 const box = await wordmarkBox();
 const wordmarkH = Math.round(10.5 * S);
@@ -121,14 +142,29 @@ const wordmark = await (await logo({ cream: NAVY, crop: box }))
   .png()
   .toBuffer();
 
-const front = await recolour(`${OUT}/source/front-skyline.webp`, CREAM, mix(CREAM, NAVY, 0.18));
-await front
-  .composite([
-    { input: frontMarks },
-    { input: wordmark, left: Math.round(16 * S), top: Math.round(107 * S) - wordmarkH },
-  ])
-  .webp({ quality: 90 })
-  .toFile(`${OUT}/front.webp`);
+const skyline = await (
+  await recolour(`${OUT}/source/front-skyline.webp`, CREAM, mix(CREAM, NAVY, 0.18))
+)
+  .png()
+  .toBuffer();
+
+for (const [kind, shapes] of Object.entries(marks)) {
+  const overlay = Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><g transform="scale(${S})" fill="${navy}">${shapes}</g></svg>`,
+  );
+  const face = await sharp(skyline)
+    .composite([
+      { input: overlay },
+      { input: wordmark, left: Math.round(16 * S), top: Math.round(107 * S) - wordmarkH },
+    ])
+    .png()
+    .toBuffer();
+  // The large Google card is seen bigger than the other three.
+  await sharp(face)
+    .resize({ width: kind === 'review' ? W : 896 })
+    .webp({ quality: 90 })
+    .toFile(`${OUT}/front-${kind}.webp`);
+}
 
 // ---- Back: navy face with the full logo and the site address ---------------
 const logoW = Math.round(W * 0.44);
@@ -162,4 +198,4 @@ await back
   .webp({ quality: 90 })
   .toFile(`${OUT}/back.webp`);
 
-console.log(`Wrote ${OUT}/front.webp and ${OUT}/back.webp (${W} x ${H})`);
+console.log(`Wrote ${OUT}/front-{review,business,social,menu}.webp and ${OUT}/back.webp`);
