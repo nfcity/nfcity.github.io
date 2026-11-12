@@ -2,7 +2,8 @@
 
 export const site = {
   name: 'NFCity',
-  url: 'https://nfcity.uz',
+  // Set in astro.config.mjs.
+  url: import.meta.env.SITE,
   telegram: 'https://t.me/nfcity_uz',
   telegramHandle: '@nfcity_uz',
   phone: '+998971282900',

@@ -1,7 +1,7 @@
 # NFCity website
 
 Marketing site for NFCity (nfcity.uz). Built with Astro, Tailwind CSS, GSAP and Lenis.
-The output is plain static files, ready for Vercel or Cloudflare Pages.
+The output is plain static files, published with GitHub Pages (see Deploy below).
 
 ## Run it
 
@@ -58,7 +58,14 @@ Leave it as `null` to show "ask for price".
 
 ## Deploy
 
-- **Vercel**: import the folder or repository; the Astro preset is detected automatically.
-- **Cloudflare Pages**: build command `npm run build`, output directory `dist`.
+The site is published with GitHub Pages at https://nfcity.github.io, from the
+`nfcity/nfcity.github.io` repository. Every push to `main` rebuilds and republishes
+it through `.github/workflows/deploy.yml`; progress shows under the repository's
+Actions tab.
 
-The site address is set in `astro.config.mjs` (`site`) and `src/data/site.ts` (`url`).
+To move to nfcity.uz once the domain is registered:
+
+1. Change `SITE` in `astro.config.mjs` to `https://nfcity.uz` and push.
+2. In the repository's Settings → Pages, enter `nfcity.uz` as the custom domain.
+3. At the domain registrar, point the domain at GitHub Pages as GitHub's custom-domain
+   guide describes, then switch on "Enforce HTTPS" in the same Pages settings.

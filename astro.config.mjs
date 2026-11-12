@@ -4,8 +4,13 @@ import sitemap from '@astrojs/sitemap';
 
 const subsets = ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'];
 
+// The address the site is published at. Canonical links, hreflang, the sitemap,
+// share previews and structured data are all built from it.
+// Change it to 'https://nfcity.uz' once that domain points at the site.
+const SITE = 'https://nfcity.github.io';
+
 export default defineConfig({
-  site: 'https://nfcity.uz',
+  site: SITE,
   trailingSlash: 'always',
   devToolbar: { enabled: false },
   // One page, small stylesheet: inline it so nothing blocks the first paint.
