@@ -23,7 +23,7 @@ export const products: {
   available: boolean;
   featured?: boolean;
 }[] = [
-  { id: 'review', price: 350_000, available: true, featured: true },
+  { id: 'review', price: 300_000, available: true, featured: true },
   { id: 'business', price: null, available: false },
   { id: 'social', price: null, available: false },
   { id: 'menu', price: null, available: false },
